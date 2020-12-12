@@ -34,6 +34,9 @@ public class Test {
         }
     }
 
+    /**
+     * Run the testcase
+     */
     public void run() {
         try {
             var ref = new Object() {
@@ -41,6 +44,7 @@ public class Test {
             };
 
             Thread test = new Thread(() -> {
+                boolean success = false;
                 while (ref.running) {
                     String nextLine = Schlapptomat.getInstance().getNextLine();
                     if (!nextLine.trim().equals(expectedOutput.trim())) {
@@ -56,6 +60,9 @@ public class Test {
                         TestInitializer.increaseSucceededTests();
                     }
                 }
+                // Feed UI
+                Schlapptomat.getInstance().getTestUI().addTestCase(
+                        Arrays.toString(args), expectedOutput, success, className, methodName, computationTime);
             });
             test.start();
 

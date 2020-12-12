@@ -1,5 +1,7 @@
 package de.ypsilon.st;
 
+import de.ypsilon.st.ui.TestUI;
+
 import java.io.*;
 import java.util.Scanner;
 
@@ -17,6 +19,7 @@ public class Schlapptomat {
     private final Scanner inputScanner;
     private final PrintStream defaultOut;
     private Scanner outputScanner;
+    private TestUI testUI;
 
     /**
      * Entry method for the tool
@@ -34,7 +37,9 @@ public class Schlapptomat {
      */
     public Schlapptomat() throws IOException {
         instance = this;
+
         this.defaultOut = System.out;
+        this.testUI = new TestUI();
 
         out("", false);
         out("Launching Schlapptomat :)", false);
@@ -132,6 +137,15 @@ public class Schlapptomat {
      */
     public PrintStream getOut() {
         return defaultOut;
+    }
+
+    /**
+     * Get the UI Object for outputting the data to users
+     *
+     * @return the {@link TestUI} instance.
+     */
+    public TestUI getTestUI() {
+        return testUI;
     }
 
     /**

@@ -39,6 +39,9 @@ public class TestInitializer {
         });
     }
 
+    /**
+     * Method to run all tests that are in the test file
+     */
     public static void runAll() {
         Schlapptomat.getInstance().out(Schlapptomat.DELIMITER, false);
         tests.forEach(Test::run);
@@ -48,6 +51,9 @@ public class TestInitializer {
         succeededTests = 0;
     }
 
+    /**
+     * Method to increase the total succeeded test count
+     */
     public static void increaseSucceededTests() {
         succeededTests++;
     }
