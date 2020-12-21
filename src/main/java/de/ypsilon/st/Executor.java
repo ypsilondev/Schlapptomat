@@ -154,7 +154,7 @@ public class Executor {
      * @return the result from the method
      * @throws RuntimeException when the execution failed
      */
-    public Object evaluate(String className, String methodName, Object instance, Object... args) {
+    public Object evaluate(Test test, String className, String methodName, Object instance, Object... args) {
         // Now we can compile!
         compileData();
 
@@ -166,10 +166,13 @@ public class Executor {
                 methodArguments.add(arg.getClass());
             }
             Method method = loadedClass.getMethod(methodName, methodArguments.toArray(new Class[0]));
-            return method.invoke(
-                    (instance == null ? loadedClass.getConstructor().newInstance()
-                            : instance == "main" ? null : instance)
-                    , args);
+            long computationStart = System.nanoTime();
+            Object insta = (instance == null ? loadedClass.getConstructor().newInstance() : instance == "main" ? null : instance);
+
+            Object result =  method.invoke(insta, args);
+
+            test.setComputationTime(System.nanoTime() - computationStart);
+            return result;
         }catch(ClassNotFoundException | IllegalAccessException | NoSuchMethodException | InvocationTargetException | InstantiationException x){
             x.printStackTrace();
             throw new RuntimeException("Run failed: " + x, x);

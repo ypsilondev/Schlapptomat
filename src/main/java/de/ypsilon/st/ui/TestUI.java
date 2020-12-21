@@ -47,25 +47,26 @@ public class TestUI {
     /**
      * Add a new Testcase to the ui
      *
-     * @param input the expected output
-     * @param output the actual output
+     * @param input the program input
+     * @param expectedOutput the expected output
+     * @param outputByProgram the actual program output
      * @param success success or failed
      * @param className the class name
      * @param methodName the method name
      * @param computingTime the computation time
      */
-    public void addTestCase(String input, String output, boolean success, String className,
+    public void addTestCase(String input, String expectedOutput, String outputByProgram, boolean success, String className,
                             String methodName, long computingTime) {
         // Update Info-Panel
         currentTests++;
         if (success) currentSucceeded++;
 
         testRanLabel.setText("Test ran: " + currentTests);
-        succeededLabel.setText("Success-rate: " + currentSucceeded + "/" + currentSucceeded +
+        succeededLabel.setText("Success-rate: " + currentSucceeded + "/" + currentTests +
                 " (" + ((double) 100*currentSucceeded / currentTests) + "%)");
 
         // Update detail panel
-        panel.add(new TestcaseComponent(input, output, success, className,
+        panel.add(new TestcaseComponent(input, expectedOutput, outputByProgram, success, className,
                 methodName, computingTime));
 
         frame.revalidate();

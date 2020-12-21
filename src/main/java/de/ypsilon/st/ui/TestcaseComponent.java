@@ -1,6 +1,10 @@
 package de.ypsilon.st.ui;
 
+import de.ypsilon.st.Schlapptomat;
+import de.ypsilon.st.TestInitializer;
+
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -12,14 +16,14 @@ public class TestcaseComponent extends JPanel {
     /**
      * Initializer for a new Testcase component
      *
-     * @param input the expected output
-     * @param output the actual output
+     * @param input the program input
+     * @param expectedOutput the actual output
      * @param success test succeeded
      * @param className the class name
      * @param methodName the method name
      * @param computingTime the computation time
      */
-    public TestcaseComponent(String input, String output, boolean success, String className, String methodName, long computingTime) {
+    public TestcaseComponent(String input, String expectedOutput, String outputByProgram, boolean success, String className, String methodName, long computingTime) {
         super();
 
         setLayout(new BorderLayout());

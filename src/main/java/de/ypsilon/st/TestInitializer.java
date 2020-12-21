@@ -11,6 +11,7 @@ public class TestInitializer {
     private static List<Test> tests = new ArrayList<>();
     private static final String FILE_LOCATION = "sources/tests.txt";
     private static int succeededTests = 0;
+    public static final String END_OF_LINE_DELIMITER = "<|>";
 
     /**
      * Loads all test in a specific test file
@@ -32,8 +33,8 @@ public class TestInitializer {
         Scanner scanner = new Scanner(new FileReader(testsFile));
         scanner.useDelimiter("\n");
         scanner.forEachRemaining(testLine -> {
-            if (!testLine.startsWith("#")) {
-                Test test = new Test(testLine);
+            if (!testLine.startsWith("#") && !testLine.equals("")) {
+                Test test = new Test(testLine + END_OF_LINE_DELIMITER);
                 tests.add(test);
             }
         });
@@ -44,10 +45,17 @@ public class TestInitializer {
      */
     public static void runAll() {
         Schlapptomat.getInstance().out(Schlapptomat.DELIMITER, false);
+
+        // Run every test
         tests.forEach(Test::run);
+
+        double successRate = (double) 100*succeededTests / tests.size();
+
+        // Feed console
         Schlapptomat.getInstance().out("All test completed", false);
         Schlapptomat.getInstance().out(
-                "Completed " + succeededTests + "/" + tests.size() + " (" + ((double) 100*succeededTests/tests.size()) + "%)", true);
+                "Completed " + succeededTests + "/" + tests.size() + " (" + successRate + "%)", true);
+
         succeededTests = 0;
     }
 
