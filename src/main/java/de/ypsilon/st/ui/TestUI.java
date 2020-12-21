@@ -3,6 +3,8 @@ package de.ypsilon.st.ui;
 import javax.swing.*;
 import java.awt.*;
 
+import java.util.List;
+
 public class TestUI {
 
     private final JFrame frame;

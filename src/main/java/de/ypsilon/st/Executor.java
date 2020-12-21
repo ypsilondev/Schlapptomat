@@ -21,6 +21,8 @@ public class Executor {
     private List<JavaFileObject> sourceFiles;
     private Map<String, ByteArrayOutputStream> classCache;
     private ForwardingJavaFileManager<StandardJavaFileManager> forwardingJavaFileManager;
+    private HashMap<String, Class<?>> loadedClassCache = new HashMap<>();
+    private ClassLoader classLoader;
 
     /**
      * Constructor to create a new usable instance from the Executor with everything set up.
@@ -67,6 +69,18 @@ public class Executor {
         };
 
         sourceFiles = new LinkedList<>();
+
+        classLoader = new ClassLoader(){
+            @Override
+            public Class<?> findClass(String name){
+                byte[] bytes = classCache.get(name).toByteArray();
+                return defineClass(name, bytes, 0, bytes.length);
+            }
+        };
+    }
+
+    public void compileData() {
+        compiler.getTask(null, forwardingJavaFileManager, null, null, null, sourceFiles).call();
     }
 
     /**
@@ -109,6 +123,26 @@ public class Executor {
     }
 
     /**
+     * Load a class in a asynchronous context
+     *
+     * @param className the class name
+     * @return a the class
+     * @throws ClassNotFoundException when the class was not found.
+     */
+    private synchronized Class<?> loadClass(String className) throws ClassNotFoundException {
+        Class<?> aClass;
+
+        if(!loadedClassCache.containsKey(className)) {
+            aClass = classLoader.loadClass(className);
+            loadedClassCache.put(className, aClass);
+
+            return aClass;
+        }
+
+        return loadedClassCache.get(className);
+    }
+
+    /**
      * Evaluate a method from the source files
      *
      * @param className the classname from the classes method
@@ -122,16 +156,10 @@ public class Executor {
      */
     public Object evaluate(String className, String methodName, Object instance, Object... args) {
         // Now we can compile!
-        compiler.getTask(null, forwardingJavaFileManager, null, null, null, sourceFiles).call();
+        compileData();
 
         try{
-            Class<?> loadedClass = new ClassLoader(){
-                @Override
-                public Class<?> findClass(String name){
-                    byte[] bytes = classCache.get(name).toByteArray();
-                    return defineClass(name, bytes, 0, bytes.length);
-                }
-            }.loadClass(className);
+            Class<?> loadedClass = loadClass(className);
 
             List<Class<?>> methodArguments = new ArrayList<>();
             for (Object arg : args) {
@@ -143,6 +171,7 @@ public class Executor {
                             : instance == "main" ? null : instance)
                     , args);
         }catch(ClassNotFoundException | IllegalAccessException | NoSuchMethodException | InvocationTargetException | InstantiationException x){
+            x.printStackTrace();
             throw new RuntimeException("Run failed: " + x, x);
         }
     }

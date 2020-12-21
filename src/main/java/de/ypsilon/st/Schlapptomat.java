@@ -4,6 +4,7 @@ import de.ypsilon.st.ui.TestUI;
 
 import java.io.*;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 /**
  * Main class from the Schlapptomat Tool for automatic Tests
@@ -52,6 +53,8 @@ public class Schlapptomat {
         redirectSteams();
         loadFiles();
 
+        executor.compileData();
+
         TestInitializer.loadTests();
         TestInitializer.runAll();
     }
@@ -66,7 +69,7 @@ public class Schlapptomat {
         final PipedOutputStream out = new PipedOutputStream(in);
 
         outputScanner = new Scanner(in);
-        outputScanner.useDelimiter("\n");
+        outputScanner.useDelimiter(Pattern.quote("<|>"));
 
         System.setOut(new PrintStream(out));
     }
